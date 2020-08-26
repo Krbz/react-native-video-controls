@@ -28,7 +28,7 @@ export default class VideoPlayer extends Component {
     paused: false,
     repeat: false,
     muted: true,
-    volume: 0,
+    volume: 1,
     onVolumeMuted: null,
     onVolumeUnMuted: null,
     title: '',
@@ -162,15 +162,15 @@ export default class VideoPlayer extends Component {
   }
 
   /**
-    | -------------------------------------------------------
-    | Events
-    | -------------------------------------------------------
-    |
-    | These are the events that the <Video> component uses
-    | and can be overridden by assigning it as a prop.
-    | It is suggested that you override onEnd.
-    |
-    */
+   | -------------------------------------------------------
+   | Events
+   | -------------------------------------------------------
+   |
+   | These are the events that the <Video> component uses
+   | and can be overridden by assigning it as a prop.
+   | It is suggested that you override onEnd.
+   |
+   */
 
   /**
    * When load starts we display a loading icon
@@ -308,16 +308,16 @@ export default class VideoPlayer extends Component {
   }
 
   /**
-    | -------------------------------------------------------
-    | Methods
-    | -------------------------------------------------------
-    |
-    | These are all of our functions that interact with
-    | various parts of the class. Anything from
-    | calculating time remaining in a video
-    | to handling control operations.
-    |
-    */
+   | -------------------------------------------------------
+   | Methods
+   | -------------------------------------------------------
+   |
+   | These are all of our functions that interact with
+   | various parts of the class. Anything from
+   | calculating time remaining in a video
+   | to handling control operations.
+   |
+   */
 
   /**
    * Set a timeout when the controls are shown
@@ -709,15 +709,15 @@ export default class VideoPlayer extends Component {
   }
 
   /**
-    | -------------------------------------------------------
-    | React Component functions
-    | -------------------------------------------------------
-    |
-    | Here we're initializing our listeners and getting
-    | the component ready using the built-in React
-    | Component methods
-    |
-    */
+   | -------------------------------------------------------
+   | React Component functions
+   | -------------------------------------------------------
+   |
+   | Here we're initializing our listeners and getting
+   | the component ready using the built-in React
+   | Component methods
+   |
+   */
 
   /**
    * Before mounting, init our seekbar and volume bar
@@ -853,16 +853,16 @@ export default class VideoPlayer extends Component {
   }
 
   /**
-    | -------------------------------------------------------
-    | Rendering
-    | -------------------------------------------------------
-    |
-    | This section contains all of our render methods.
-    | In addition to the typical React render func
-    | we also have all the render methods for
-    | the controls.
-    |
-    */
+   | -------------------------------------------------------
+   | Rendering
+   | -------------------------------------------------------
+   |
+   | This section contains all of our render methods.
+   | In addition to the typical React render func
+   | we also have all the render methods for
+   | the controls.
+   |
+   */
 
   /**
    * Standard render control function that handles
@@ -900,35 +900,40 @@ export default class VideoPlayer extends Component {
     const backControl = this.props.disableBack
       ? this.renderNullControl()
       : this.renderBack();
-    const volumeControl = this.props.disableVolume
-      ? this.renderNullControl()
-      : this.renderMuteButton();
     const fullscreenControl = this.props.disableFullscreen
       ? this.renderNullControl()
       : this.renderFullscreen();
+    const volumeControl = this.props.disableVolume
+      ? this.renderNullControl()
+      : this.renderMuteButton();
 
     return (
-      <Animated.View
-        style={[
-          styles.controls.top,
-          {
-            opacity: this.animations.topControl.opacity,
-            marginTop: this.animations.topControl.marginTop,
-          },
-        ]}>
-        <ImageBackground
-          source={require('./assets/img/top-vignette.png')}
-          style={[styles.controls.column]}
-          imageStyle={[styles.controls.vignette]}>
+      <>
+        <Animated.View
+          style={[
+            styles.controls.top,
+            {
+              opacity: this.animations.topControl.opacity,
+              marginTop: this.animations.topControl.marginTop,
+            },
+          ]}>
+          <ImageBackground
+            source={require('./assets/img/top-vignette.png')}
+            style={[styles.controls.column]}
+            imageStyle={[styles.controls.vignette]}>
+            <SafeAreaView style={styles.controls.topControlGroup}>
+              {backControl}
+              <View style={styles.controls.pullRight}>{fullscreenControl}</View>
+            </SafeAreaView>
+          </ImageBackground>
+        </Animated.View>
+        <View style={[styles.controls.top]}>
           <SafeAreaView style={styles.controls.topControlGroup}>
             {backControl}
-            <View style={styles.controls.pullRight}>
-              {volumeControl}
-              {fullscreenControl}
-            </View>
+            <View style={styles.controls.pullRight}>{volumeControl}</View>
           </SafeAreaView>
-        </ImageBackground>
-      </Animated.View>
+        </View>
+      </>
     );
   }
 
