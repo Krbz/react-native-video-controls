@@ -27,8 +27,10 @@ export default class VideoPlayer extends Component {
     showOnStart: true,
     paused: false,
     repeat: false,
-    muted: false,
-    volume: 1,
+    muted: true,
+    volume: 0,
+    onVolumeMuted: null,
+    onVolumeUnMuted: null,
     title: '',
     rate: 1,
   };
@@ -517,6 +519,16 @@ export default class VideoPlayer extends Component {
     let state = this.state;
     state.muted = !state.muted;
     this.setState(state);
+
+    if (state.muted) {
+      if (this.props.onVolumeMuted) {
+        this.props.onVolumeMuted();
+      }
+    } else {
+      if (this.props.onVolumeUnMuted) {
+        this.props.onVolumeUnMuted();
+      }
+    }
   }
 
   /**
