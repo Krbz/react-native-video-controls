@@ -107,6 +107,7 @@ export default class VideoPlayer extends Component {
       togglePlayPause: this._togglePlayPause.bind(this),
       toggleControls: this._toggleControls.bind(this),
       toggleTimer: this._toggleTimer.bind(this),
+      toggleMute: this._toggleMute.bind(this),
     };
 
     /**
@@ -512,6 +513,12 @@ export default class VideoPlayer extends Component {
     this.setState(state);
   }
 
+  _toggleMute() {
+    let state = this.state;
+    state.muted = !state.muted;
+    this.setState(state);
+  }
+
   /**
    * The default 'onBack' function pops the navigator
    * and as such the video player requires a
@@ -706,7 +713,6 @@ export default class VideoPlayer extends Component {
    */
   UNSAFE_componentWillMount() {
     this.initSeekPanResponder();
-    this.initVolumePanResponder();
   }
 
   /**
@@ -835,50 +841,6 @@ export default class VideoPlayer extends Component {
   }
 
   /**
-   * Initialize the volume pan responder.
-   */
-  initVolumePanResponder() {
-    this.player.volumePanResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onPanResponderGrant: (evt, gestureState) => {
-        this.clearControlTimeout();
-      },
-
-      /**
-       * Update the volume as we change the position.
-       * If we go to 0 then turn on the mute prop
-       * to avoid that weird static-y sound.
-       */
-      onPanResponderMove: (evt, gestureState) => {
-        let state = this.state;
-        const position = this.state.volumeOffset + gestureState.dx;
-
-        this.setVolumePosition(position);
-        state.volume = this.calculateVolumeFromVolumePosition();
-
-        if (state.volume <= 0) {
-          state.muted = true;
-        } else {
-          state.muted = false;
-        }
-
-        this.setState(state);
-      },
-
-      /**
-       * Update the offset...
-       */
-      onPanResponderRelease: (evt, gestureState) => {
-        let state = this.state;
-        state.volumeOffset = state.volumePosition;
-        this.setControlTimeout();
-        this.setState(state);
-      },
-    });
-  }
-
-  /**
     | -------------------------------------------------------
     | Rendering
     | -------------------------------------------------------
@@ -928,7 +890,7 @@ export default class VideoPlayer extends Component {
       : this.renderBack();
     const volumeControl = this.props.disableVolume
       ? this.renderNullControl()
-      : this.renderVolume();
+      : this.renderMuteButton();
     const fullscreenControl = this.props.disableFullscreen
       ? this.renderNullControl()
       : this.renderFullscreen();
@@ -969,30 +931,6 @@ export default class VideoPlayer extends Component {
       />,
       this.events.onBack,
       styles.controls.back,
-    );
-  }
-
-  /**
-   * Render the volume slider and attach the pan handlers
-   */
-  renderVolume() {
-    return (
-      <View style={styles.volume.container}>
-        <View
-          style={[styles.volume.fill, {width: this.state.volumeFillWidth}]}
-        />
-        <View
-          style={[styles.volume.track, {width: this.state.volumeTrackWidth}]}
-        />
-        <View
-          style={[styles.volume.handle, {left: this.state.volumePosition}]}
-          {...this.player.volumePanResponder.panHandlers}>
-          <Image
-            style={styles.volume.icon}
-            source={require('./assets/img/volume.png')}
-          />
-        </View>
-      </View>
     );
   }
 
@@ -1133,6 +1071,18 @@ export default class VideoPlayer extends Component {
       <Text style={styles.controls.timerText}>{this.calculateTime()}</Text>,
       this.methods.toggleTimer,
       styles.controls.timer,
+    );
+  }
+
+  renderMuteButton() {
+    let source =
+      this.state.muted === true
+        ? require('./assets/img/volume-mute.png')
+        : require('./assets/img/volume.png');
+    return this.renderControl(
+      <Image source={source} />,
+      this.methods.toggleMute,
+      styles.controls.muteButton,
     );
   }
 
@@ -1329,6 +1279,9 @@ const styles = {
       marginBottom: 0,
     },
     volume: {
+      flexDirection: 'row',
+    },
+    muteButton: {
       flexDirection: 'row',
     },
     fullscreen: {
