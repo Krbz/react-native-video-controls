@@ -27,7 +27,7 @@ export default class VideoPlayer extends Component {
     showOnStart: true,
     paused: false,
     repeat: false,
-    muted: true,
+    muted: false,
     volume: 1,
     onVolumeMuted: null,
     onVolumeUnMuted: null,
@@ -518,7 +518,6 @@ export default class VideoPlayer extends Component {
   _toggleMute() {
     let state = this.state;
     state.muted = !state.muted;
-    this.setState(state);
 
     if (state.muted) {
       if (this.props.onVolumeMuted) {
@@ -529,6 +528,8 @@ export default class VideoPlayer extends Component {
         this.props.onVolumeUnMuted();
       }
     }
+
+    this.setState(state);
   }
 
   /**
@@ -752,13 +753,7 @@ export default class VideoPlayer extends Component {
    * bar based on the volume property supplied to it.
    */
   componentDidMount() {
-    const position = this.calculateVolumePositionFromVolume();
-    let state = this.state;
-    this.setVolumePosition(position);
-    state.volumeOffset = position;
     this.mounted = true;
-
-    this.setState(state);
   }
 
   /**
