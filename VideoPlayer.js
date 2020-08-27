@@ -904,24 +904,28 @@ export default class VideoPlayer extends Component {
 
     return (
       <>
-        <Animated.View
-          style={[
-            styles.controls.top,
-            {
-              opacity: this.animations.topControl.opacity,
-              marginTop: this.animations.topControl.marginTop,
-            },
-          ]}>
-          <ImageBackground
-            source={require('./assets/img/top-vignette.png')}
-            style={[styles.controls.column]}
-            imageStyle={[styles.controls.vignette]}>
-            <SafeAreaView style={styles.controls.topControlGroup}>
-              {backControl}
-              <View style={styles.controls.pullRight}>{fullscreenControl}</View>
-            </SafeAreaView>
-          </ImageBackground>
-        </Animated.View>
+        {!this.props.disableFullscreen && (
+          <Animated.View
+            style={[
+              styles.controls.top,
+              {
+                opacity: this.animations.topControl.opacity,
+                marginTop: this.animations.topControl.marginTop,
+              },
+            ]}>
+            <ImageBackground
+              source={require('./assets/img/top-vignette.png')}
+              style={[styles.controls.column]}
+              imageStyle={[styles.controls.vignette]}>
+              <SafeAreaView style={styles.controls.topControlGroup}>
+                {backControl}
+                <View style={styles.controls.pullRight}>
+                  {fullscreenControl}
+                </View>
+              </SafeAreaView>
+            </ImageBackground>
+          </Animated.View>
+        )}
         <View style={[styles.controls.top]}>
           <SafeAreaView style={styles.controls.topControlGroup}>
             {backControl}
